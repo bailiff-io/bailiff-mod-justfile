@@ -7,6 +7,15 @@ cocogitto fan-out (ADR-0006); do not hand-edit released sections.
 
 <!--
   cocogitto inserts each released version's section ABOVE the `- - -
+## bailiff-mod-justfile-v0.3.0 - 2026-07-26
+#### Features
+- (**scaffold**) carry module order and gating in bd formulas - (b0a3766) - Sjors Robroek
+#### Bug Fixes
+- answers-file resume, exclusive capability refusal, stop publishing - (dd0de25) - Sjors Robroek
+- six defects found by clean-context skill testers - (2e3a9a6) - Sjors Robroek
+
+- - -
+
 ## bailiff-mod-justfile-v0.2.0 - 2026-07-17
 #### Features
 - (**014/justfile**) migrate edge/phase model, add mise conf.d fragment - (cc5123f) - Sjors Robroek

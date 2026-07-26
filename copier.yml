@@ -34,27 +34,31 @@ language:
   help: "Primary language for recipe bodies. Empty = fail-loud stubs."
 
 # Threaded from an upstream ts/js layer (cross-cutting §1); standalone default
-# bun. Uses default: "{{ js_pkg_manager }}" so a pre-set answer threads through
-# without hardcoding which layer supplied it (FR-010).
+# bun. The `| default(...)` fallback is load-bearing: a bare "{{ js_pkg_manager }}"
+# NOTE: the default must be a LITERAL, never "{{ js_pkg_manager | default('bun') }}".
+# Inside its own question a name resolves to the question being defined, which is
+# undefined, so a self-referencing default renders EMPTY and copier refuses with
+# "Invalid choice for 'js_pkg_manager': ''". A producer still overrides a literal
+# default via --data, so threading works without the self-reference.
 js_pkg_manager:
   type: str
   choices:
     - bun
     - pnpm
     - npm
-  default: "{{ js_pkg_manager }}"
+  default: bun
   help: "JS package manager (threaded from upstream; standalone default bun)."
 
-# Threaded from bailiff-mod-precommit (cross-cutting §4); standalone default
-# pre-commit. The `lint` recipe emits the right invocation or degrades when none.
+# Threaded from bailiff-mod-precommit (cross-cutting §4); falls back to
+# none when absent. The `lint` recipe emits the right invocation or degrades when none.
 hook_manager:
   type: str
   choices:
     - pre-commit
     - lefthook
     - none
-  default: "{{ hook_manager }}"
-  help: "Hook manager for the lint recipe (threaded from bailiff-mod-precommit; standalone default pre-commit)."
+  default: none
+  help: "Hook manager for the lint recipe (threaded from bailiff-mod-precommit; 'none' when absent)."
 
 # --- Dependency edge (spec 014 R7: depends_on is the only ordering edge) -----
 # bailiff-mod-base must run before justfile (provides the project scaffold).
@@ -65,9 +69,6 @@ depends_on:
   default:
     - bailiff-mod-base
   when: false
-
-# Phase: normal (spec 014 FR-020/R8).
-_bailiff_phase: normal
 
 # The template body lives under template/ so copier renders only that subtree.
 _subdirectory: template
